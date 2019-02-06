@@ -146,3 +146,55 @@ $border-radius:                  3px !default;
 
 $font-weight-bold:               600 !default;
 $font-weight-normal:             400 !default;
+
+//************************************************************************//
+// Default: Webkit, moz, spec
+// Example: @include prefixer(border-radius, $radii, $o: true);
+//
+// Source : https://github.com/thoughtbot/bourbon/blob/master/app/assets/stylesheets/css3/_prefixer.scss
+//************************************************************************//
+@mixin prefixer ($property, $value,
+                 $webkit: true,
+                    $moz: true,
+                     $ms: false,
+                      $o: false,
+                   $spec: true) {
+  @if $webkit { -webkit-#{$property}: $value; }
+  @if $moz    {    -moz-#{$property}: $value; }
+  @if $ms     {     -ms-#{$property}: $value; }
+  @if $o      {      -o-#{$property}: $value; }
+  @if $spec   {         #{$property}: $value; }
+}
+
+//************************************************************************//
+// Source : https://github.com/thoughtbot/bourbon/blob/master/app/assets/stylesheets/css3/_border-radius.scss
+//************************************************************************//
+@mixin border-radius ($radii) {
+  @include prefixer(border-radius, $radii, webkit, moz, ms, o);
+}
+
+// Make color very close to white
+@function very-light($color, $adjust: 3){  
+  @if type-of($adjust) == 'number' and $adjust > 0 {
+    @for $i from 0 through 100 {
+      @if lighten($color, $i) == white and ($i - $adjust) > $adjust {
+        @return lighten($color, $i - $adjust);
+      }
+    }
+  }
+  @else {
+    @debug "Please correct $adjust value. It should be number and larger then 0. Currently it is '#{type-of($adjust)}' with value '#{$adjust}'"
+  }
+};
+
+// Quick fix for dynamic variables missing in SASS
+@function get-value($prop, $val, $search) {
+  $n1: index($prop, $search);
+  $n2: index($val, $search);
+
+  @if($n1) {
+    @return nth($val, $n1);
+  } @else {
+    @return nth($prop, $n2);
+  }
+}
